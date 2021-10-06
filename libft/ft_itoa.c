@@ -3,64 +3,77 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bclerc <bclerc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: allopez <allopez@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/11 16:03:21 by allopez           #+#    #+#             */
-/*   Updated: 2021/10/06 16:09:21 by bclerc           ###   ########.fr       */
+/*   Created: 2021/10/06 16:41:57 by allopez           #+#    #+#             */
+/*   Updated: 2021/10/06 16:43:32 by allopez          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static void	itoa_is_neg(int *nb, int *neg)
+static char	*allomem(int n, int len)
 {
-	if (*nb < 0)
+	char	*output;
+
+	if (n != 0)
+		output = malloc(len + 1);
+	else
+		output = malloc(2);
+	if (!output)
+		return (NULL);
+	return (output);
+}
+
+static void	fill(char *out, long n, int len)
+{
+	if (n < 0)
 	{
-		*nb *= -1;
-		*neg = 1;
+		*out = '-';
+		fill(out, n * -1, len);
+	}
+	else if (n > 0)
+	{
+		*(out + len - 1) = '0' + (n % 10);
+		fill(out, n / 10, len - 1);
+	}
+}
+
+int	ft_digitcount(long n)
+{
+	int	count;
+
+	if (n == 0)
+		return (1);
+	count = 0;
+	while (n)
+	{
+		count++;
+		n /= 10;
+	}
+	return (count);
+}
+
+char	*ft_itoa(int n)
+{
+	char	*output;
+	int		len;
+
+	len = ft_digitcount(n);
+	if (n < 0)
+		len++;
+	output = allomem(n, len);
+	if (!output)
+		return (NULL);
+	if (n != 0)
+	{
+		fill(output, (long)n, len);
+		*(output + len) = '\0';
 	}
 	else
-		*neg = 0;
-}
-
-static int	len_init(int nb)
-{
-	int	len;
-
-	len = 2;
-	while (nb)
 	{
-		len++;
-		nb /= 10;
+		*output = '0';
+		*(output + 1) = '\0';
 	}
-	return (len);
-}
-
-char	*ft_itoa(int nb)
-{
-	int		i;
-	int		len;
-	int		neg;
-	char	*dest;
-
-	itoa_is_neg(&nb, &neg);
-	if (nb == -2147483648)
-		return (ft_strdup("-2147483648"));
-	i = nb;
-	len = len_init(nb);
-	len += neg;
-	dest = (char *)malloc(sizeof(char) * len);
-	if (!dest)
-		return (0);
-	if (neg)
-		dest[0] = '-';
-	dest[--len] = '\0';
-	while (len--)
-	{
-		dest[len] = nb % 10 + '0';
-		nb /= 10;
-	}
-	if (neg)
-		dest[0] = '-';
-	return (dest);
+	return (output);
 }
