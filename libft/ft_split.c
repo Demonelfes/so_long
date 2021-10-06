@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: allopez <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: bclerc <bclerc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/11 16:04:50 by allopez           #+#    #+#             */
-/*   Updated: 2020/01/11 16:04:51 by allopez          ###   ########.fr       */
+/*   Updated: 2021/10/06 16:01:38 by bclerc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int		ft_count_words(char const *s, char c)
+static int	ft_count_words(char const *s, char c)
 {
-	int i;
-	int words;
-	int hasword;
+	int	i;
+	int	words;
+	int	hasword;
 
 	i = 0;
 	words = 0;
@@ -49,13 +49,30 @@ static	char	*ft_alloc_word(char const *s, char c)
 	tab = 0;
 	while (s[size] && s[size] != c)
 		size++;
-	if (!(tab = (char *)malloc(sizeof(char) * (size + 1))))
+	tab = (char *)malloc(sizeof(char) * (size + 1));
+	if (!tab)
 		return (NULL);
 	ft_strlcpy(tab, s, size + 1);
 	return (tab);
 }
 
-char			**ft_split(char const *s, char c)
+int	norm_shit(char **tab, int count, char const *s, char c)
+{
+	while (s[0] == c)
+		s++;
+	tab[count] = ft_alloc_word(s, c);
+	if (!(tab[count]))
+	{
+		while (count > 0)
+			free(tab[count--]);
+		free(tab);
+		return (-1);
+	}
+	s += ft_strlen(tab[count]);
+	return (count);
+}
+
+char	**ft_split(char const *s, char c)
 {
 	int		count;
 	int		words;
@@ -65,20 +82,13 @@ char			**ft_split(char const *s, char c)
 	if (!s)
 		return (NULL);
 	words = ft_count_words(s, c);
-	if (!(tab = malloc(sizeof(char *) * (words + 1))))
+	tab = malloc(sizeof(char *) * (words + 1));
+	if (!tab)
 		return (NULL);
 	while (++count < words)
 	{
-		while (s[0] == c)
-			s++;
-		if (!(tab[count] = ft_alloc_word(s, c)))
-		{
-			while (count > 0)
-				free(tab[count--]);
-			free(tab);
+		if (norm_shit(tab, count, s, c) == -1)
 			return (NULL);
-		}
-		s += ft_strlen(tab[count]);
 	}
 	tab[count] = 0;
 	return (tab);
