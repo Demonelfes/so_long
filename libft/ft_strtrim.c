@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: allopez <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: bclerc <bclerc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/11 16:06:00 by allopez           #+#    #+#             */
-/*   Updated: 2020/01/11 16:06:01 by allopez          ###   ########.fr       */
+/*   Updated: 2021/10/06 15:50:35 by bclerc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static	int	ft_get_size(char const *s1, char const *set)
 	return (size - count);
 }
 
-char		*ft_strtrim(char const *s1, char const *set)
+char	*ft_strtrim(char const *s1, char const *set)
 {
 	int		count;
 	int		size;
@@ -52,7 +52,8 @@ char		*ft_strtrim(char const *s1, char const *set)
 	if (count == (int)ft_strlen(s1))
 		return (ft_strdup(""));
 	size = ft_get_size(s1 + count, set) + 1;
-	if (!(tab = (char *)malloc((size) * sizeof(char))))
+	tab = (char *)malloc((size) * sizeof(char)));
+	if (!tab)
 		return (NULL);
 	ft_strlcpy(tab, s1 + count, size);
 	return (tab);
